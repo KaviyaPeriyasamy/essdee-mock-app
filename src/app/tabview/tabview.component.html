@@ -1,0 +1,160 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="container">
+  <div class="container">
+    <div class="row">
+      <div class="column">
+        <label for="typeahead-basic">Item:</label>
+    </div>
+    <div class="column">
+    <input id="typeahead-basic" type="text" class="form-control" [ngbTypeahead]="search_item"/>
+        </div>
+    <div class="column">
+        <label for="typeahead-basic">Lot Number:</label>
+    </div>
+    <div class="column">
+    <input id="typeahead-basic" type="text" class="form-control" [ngbTypeahead]="search_lot"/>
+  </div>
+      </div>
+    </div>
+    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+      <label ngbButtonLabel class="btn btn-danger">
+        <input ngbButton type="radio"> Cancel
+      </label>
+  </div>
+  <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+  <label ngbButtonLabel class="btn btn-success">
+      <input ngbButton type="radio"> Done
+      </label>
+  </div>
+</div>
+<hr>
+<div class="card">
+  <div class="card-body">
+    </div>
+    <div>
+      <label style="padding:10px">Add Item:</label>
+      <hr style="width: 70%; margin-left: auto;
+      margin-right: auto;">
+    </div>
+    </div>
+</ng-template>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+    <li [ngbNavItem]="1">
+      <a ngbNavLink>New DC</a>
+      <ng-template ngbNavContent>
+        <legend>Delivery Challan</legend>
+        <hr>
+               <div class="container">
+                   <div class="row">
+                   <div class="column">
+                       <label>DC Type:</label>
+                   </div>
+                   <ng-select [items]="processes"
+                   bindLabel="name" [(ngModel)]="selectedProcess">
+                   </ng-select>
+                   <div class="column">
+                       <label>DC Series:</label>   
+                   </div>
+                   <div class="column">
+                   <input type="text" readonly=true style="height: 70%; border-radius: 10%;" value={{series}}>
+                   </div>
+                   <div class="column">
+                   <input type="checkbox" [(ngModel)]="enabled" ngModel (ngModelChange)="setSeries($event)"/>
+                   </div>
+                   <div class="column">
+                       <label>Internal Goods Transfer</label>
+                   </div>
+                   </div>
+                   <div class="row">
+                       <div class="column">
+                           <label>Supplier Name:</label>
+                       </div>
+                       <ng-select [items]="suppliers"
+                       bindLabel="name" (change)="changeFn(selectedSupplier)" [(ngModel)]="selectedSupplier">
+                       </ng-select>
+                       <div class="column">
+                        <label>Supplier Address:</label>   
+                    </div>
+                    <div class="column">
+                    <textarea rows="2" cols="50" readonly=true  value ={{address}} >
+                    </textarea>
+                    </div>
+                       </div>
+                   </div>
+                   <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+                       <label ngbButtonLabel class="btn btn-danger">
+                         <input ngbButton type="radio" ngModel (ngModelChange)="ClearFields();"> Clear DC
+                       </label>
+                   </div>
+                   <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+                   <label ngbButtonLabel class="btn btn-success">
+                       <!-- <input ngbButton type="radio" (click)="showSuccess()"> Save DC -->
+                       <input ngbButton type="radio" (click)="openLg(content)"> Save DC
+                       </label>
+                   </div>
+       <hr>
+        <div class="card">
+             <div class="card-body">
+              <div class ="container">
+                <div class="row">
+                    <div class="column">
+                    <label>Add Items:</label>
+                    </div>
+                    <div class="column">
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+                        <label ngbButtonLabel class="btn-primary btn-sm">
+                          <input ngbButton type="radio" (click)="selected_type='cloth'"> Cloth
+                        </label>
+                        <label ngbButtonLabel class="btn-primary btn-sm">
+                          <input ngbButton type="radio" (click)="selected_type='piece'"> Piece
+                        </label>
+                        <label ngbButtonLabel class="btn-primary btn-sm">
+                          <input ngbButton type="radio" (click)="selected_type='packed'"> Packed
+                        </label>
+                        <label ngbButtonLabel class="btn-primary btn-sm">
+                          <input ngbButton type="radio" (click)="selected_type='accessories'"> Accessories
+                        </label>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                <div class="container">
+                    <div class="row">
+                    <div class="column">
+                        <label for="typeahead-basic">Lot Number:</label>
+                    </div>
+                    <div class="column">
+                    <input id="typeahead-basic1" type="text" class="form-control" [ngbTypeahead]="search_lot"/>
+                  </div>
+                    <div class="column" *ngIf="selected_type == 'piece'|| selected_type =='packed'">
+                        <label for="typeahead-basic">Item:</label>
+                    </div>
+                    <div class="column" *ngIf="selected_type == 'piece'|| selected_type =='packed'">
+                    <input id="typeahead-basic2" type="text" class="form-control" [ngbTypeahead]="search_item"/>
+                        </div>
+                        <div class="column" *ngIf="selected_type =='cloth' || selected_type == ''">
+                          <label for="typeahead-basic">New Colour:</label>
+                      </div>
+                      <div class="column" *ngIf="selected_type =='cloth' || selected_type =='' ">
+                      <input id="typeahead-basic" type="text" class="form-control" [ngbTypeahead]="search_colour"/>
+                          </div>
+                      </div>
+                    </div>
+    </div>
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="2">
+      <a ngbNavLink>View DC</a>
+    </li>
+    <li [ngbNavItem]="3">
+      <a ngbNavLink>New GRN</a>
+    </li>
+  </ul>
+  
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
