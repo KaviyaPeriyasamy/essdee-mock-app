@@ -512,12 +512,9 @@
     </div>
     </div>
 </ng-template>
-
-<ul ngbNav #nav="ngbNav" class="nav-tabs">
-    <li [ngbNavItem]="1">
-      <a ngbNavLink>New DC</a>
-      <ng-template ngbNavContent>
-        <legend>Delivery Challan</legend>
+<div class="card">
+  <div class="card-body">
+    <legend>Delivery Challan</legend>
         <hr>
         <!-- <ng-editable-table [table-headers]="tableHeaders" [table-rows]="tableRows" ></ng-editable-table> -->
                <div class="container">
@@ -705,24 +702,6 @@
                     </div>
     </div>
         </div>
-      </ng-template>
-    </li>
-    <li [ngbNavItem]="2">
-      <a ngbNavLink>View DC</a>
-    </li>
-    <li [ngbNavItem]="3">
-      <a ngbNavLink>New GRN</a>
-    </li>
-  </ul>
-  
-  <div [ngbNavOutlet]="nav" class="mt-2"></div>
 
-
-
-  <!-- <ul ngbNav [activeId]="route.fragment | async" class="nav-tabs">
-    <li [ngbNavItem]="link.fragment" *ngFor="let link of links">
-      <a ngbNavLink routerLink="." [fragment]="link.fragment">{{ link.title }}</a>
-    </li>
-  </ul>
-  
-  <router-outlet></router-outlet> -->
+  </div>
+</div>

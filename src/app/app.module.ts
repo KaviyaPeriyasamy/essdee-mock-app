@@ -9,12 +9,21 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
  import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NavbarComponent } from './navbar/navbar.component';
+import {RouterModule} from '@angular/router';
+import { ViewdcComponent } from './viewdc/viewdc.component';
+import { ViewgrnComponent } from './viewgrn/viewgrn.component';
+import { NewgrnComponent } from './newgrn/newgrn.component';
 // import { EditableTableModule } from 'ng-editable-table/editable-table/editable-table.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TabviewComponent
+    TabviewComponent,
+    NavbarComponent,
+    ViewdcComponent,
+    ViewgrnComponent,
+    NewgrnComponent
   ],
   imports: [
     BrowserModule,
@@ -24,6 +33,12 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule,
     FormsModule,
     CommonModule,
+    RouterModule.forRoot([
+      {path:'newdc',component:TabviewComponent},
+      {path:'viewdc',component:ViewdcComponent},
+      {path:'newgrn',component:NewgrnComponent},
+      {path:'viewgrn',component:ViewgrnComponent}
+    ])
     // EditableTableModule
   ],
   providers: [],
