@@ -9,6 +9,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
  import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+// import { EditableTableModule } from 'ng-editable-table/editable-table/editable-table.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { CommonModule } from '@angular/common';
     NgSelectModule,
     ReactiveFormsModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    // EditableTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

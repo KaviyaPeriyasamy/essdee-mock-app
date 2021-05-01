@@ -1,54 +1,525 @@
 <ng-template #content let-modal>
   <div class="modal-header">
+    <h5>Cloth Item</h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<div class="card" *ngIf="dataList?.length">
+  <div class="card-body">
+    <div id="table" class="table-editable">
+      <label>Colour: {{selectedColour}}</label>
+      <br>
+      <label>Lot Number: {{selectedLot}}</label>
+      <table class="table table-bordered table-responsive-md table-striped text-center">
+        <tr>
+          <th class="text-center">Dia</th>
+          <th class="text-center">Roll</th>
+          <th class="text-center">Weight(KG)</th>
+          <th class="text-center">Comment</th>
+          <th class="text-center">Delete</th>
+        </tr>
+        <tr *ngFor="let data of dataList; let id = index">
+          <td>
+            <span (keyup)="changeValue(id, 'dia', $event)" (blur)="updateList(id, 'dia', $event)" contenteditable="true">{{data.dia}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'roll', $event)" (blur)="updateList(id, 'roll', $event)">{{data.roll}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'weight', $event)" (blur)="updateList(id, 'weight', $event)">{{data.weight}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'comment', $event)" (blur)="updateList(id, 'comment', $event)">{{data.comment}}</span>
+          </td>
+          <td>
+            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+              <label ngbButtonLabel class="btn btn-danger btn-sm">
+                <input ngbButton type="radio" (click)="remove(id)"> Delete
+              </label>
+          </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-body">
+    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+      <label ngbButtonLabel class="btn btn-danger btn-sm">
+        <input ngbButton type="radio" (click)="modal.dismiss('Cross click')"> Cancel
+      </label>
+  </div>
+  <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+  <label ngbButtonLabel class="btn btn-success btn-sm">
+      <input ngbButton type="radio" [(ngModel)]="is_done" (click)="setTable($event);modal.dismiss('Cross click');"> Done
+      </label>
+      </div>
+    </div>
+
+    <div class="container">
+    <div class="card" style="border-radius: 10px; border-width: 4px;border-color:grey;padding-left: 1px;padding-right: 1px;margin-bottom: 50px;">
+      <div class="card-body" style="padding-left: 1.5px;padding-right: 1.5px;">
+        <strong> Add Dia:</strong>
+        <hr style="border-width: 2px; color:grey;background-color:grey">
+        <div class="row">
+          <div class="col-sm-4 border-right">
+            <label>Lot Number:</label>
+            &nbsp;
+            <input type="text" readonly=true style="width: 50% ;height: 50%; border-radius: 5px;border-width: 1px;" value={{selectedLot}}>  
+          </div>
+          <div class="col-sm-4 border-right">
+          <input type="checkbox" [(ngModel)]="enable_ditto" ngModel (ngModelChange)="setReadOnly($event)"/>
+          &nbsp;
+          <label>Enable Ditto Colour</label>
+          </div>
+          <div class="col-sm-4" *ngIf="readonly == 1">
+          <label>
+            Colour: {{selectedColour}}
+          </label>
+        </div>
+          <div class="col-sm-4" *ngIf="readonly == 0">
+            <label for="typeahead-basic">Colour:</label>
+            &nbsp;
+        <input style = "width:50%; height: 50%; border-radius: 5px;border-width: 1px;" id="typeahead-basic" type="text" class="form-control" [(ngModel)]="selectedColour" value={{selectedColour}} [ngbTypeahead]="search_colour"/>
+            </div>
+          </div>
+        <hr style="height:0.5px;border-width:0;color:grey;background-color:grey">
+        <div class="row">
+          <div class="col-sm-4 border-right" >
+            <label>Dia:</label>
+            &nbsp;
+            <input [(ngModel)]="selectedDia" style = "width: 50% ;height: 70%;border-radius: 5px;border-width: 1px;" id="diabox" type="number" min="0" step="0.05"  placeholder="Enter Dia" required autocomplete="off">
+          </div>
+          <div class="col-sm-4 border-right">
+            <label>Roll:</label>
+            &nbsp;
+            <input [(ngModel)]="selectedRoll" style = "width: 50% ;height: 70%; border-radius: 5px;border-width: 1px;" id="diabox" type="number" min="0" placeholder="Enter Roll" required autocomplete="off">
+          </div>
+          <div class="col-sm-4 border-right">
+            <label>Weight:</label>
+            &nbsp;
+            <input  (keyup.enter)="add()" [(ngModel)]="selectedWeight" style = "width: 50% ;height: 70%; border-radius: 5px;border-width: 1px;" id="diabox" type="number" min="0.001" step="0.001"  placeholder="Enter Weight" required autocomplete="off">
+          </div>
+        </div>
+        <hr style="height:0.5px;border-width:0;color:gray;background-color:grey">
+        <div class="row">
+        <div class="column1">
+          <label>Comment</label>   
+      </div>
+      <input type="text" (keyup.enter)="add()" [(ngModel)]="selectedComment" style="width: 50%; border-radius: 10px;border-width: 1px; border-color: grey;">
+    </div>
+      </div>
+    </div>
+    </div>
+    </div>
+</ng-template>
+
+<ng-template #printContent let-modal>
+  <div class="modal-header">
+    <legend style="text-align: center;">Delivery Challan</legend>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="container">
-  <div class="container">
     <div class="row">
-      <div class="column">
-        <label for="typeahead-basic">Item:</label>
+    <div class="column1">
+        <label readonly=true>DC Type:</label>
     </div>
-    <div class="column">
-    <input id="typeahead-basic" type="text" class="form-control" [ngbTypeahead]="search_item"/>
+    <div class="column1">
+      <input type="text" readonly=true style="height: 70%; border-radius: 10%;" value={{selectedProcess.name}}>  
+  </div>
+    <div class="column1">
+        <label>DC Date:</label>   
+    </div>
+    <div class="column1">
+    <input type="text" readonly=true style="height: 70%; border-radius: 10%;">
+    </div>
+    </div>
+    <div class="row">
+        <div class="column1">
+         <label>Supplier:</label>   
+     </div>
+     <div class="column1">
+     <textarea rows="2" cols="55" readonly=true  value ={{address}} >
+     </textarea>
+     </div>
+     <div class="column1">
+      <label>DC Series:</label>   
+    </div>
+    <div class="column1">
+    <input type="text" readonly=true style="height: 40%; border-radius: 10%;" value={{series}}>
+    </div>
         </div>
-    <div class="column">
-        <label for="typeahead-basic">Lot Number:</label>
     </div>
-    <div class="column">
-    <input id="typeahead-basic" type="text" class="form-control" [ngbTypeahead]="search_lot"/>
-  </div>
-      </div>
+<div class="card" *ngIf="dataList?.length">
+  <div class="card-body">
+    <div id="table" class="table-editable">
+      <label>Colour: {{selectedColour}}</label>
+      <br>
+      <label>Lot Number: {{selectedLot}}</label>
+      <table class="table table-bordered table-responsive-md table-striped text-center">
+        <tr>
+          <th class="text-center">Dia</th>
+          <th class="text-center">Roll</th>
+          <th class="text-center">Weight(KG)</th>
+          <th class="text-center">Comment</th>
+          <th class="text-center">Delete</th>
+        </tr>
+        <tr *ngFor="let data of dataList; let id = index">
+          <td>
+            <span (keyup)="changeValue(id, 'dia', $event)" (blur)="updateList(id, 'dia', $event)" contenteditable="true">{{data.dia}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'roll', $event)" (blur)="updateList(id, 'roll', $event)">{{data.roll}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'weight', $event)" (blur)="updateList(id, 'weight', $event)">{{data.weight}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'comment', $event)" (blur)="updateList(id, 'comment', $event)">{{data.comment}}</span>
+          </td>
+          <td>
+            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+              <label ngbButtonLabel class="btn btn-danger btn-sm">
+                <input ngbButton type="radio" (click)="remove(id)"> Delete
+              </label>
+          </div>
+          </td>
+        </tr>
+      </table>
     </div>
-    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
-      <label ngbButtonLabel class="btn btn-danger">
-        <input ngbButton type="radio"> Cancel
-      </label>
-  </div>
-  <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
-  <label ngbButtonLabel class="btn btn-success">
-      <input ngbButton type="radio"> Done
-      </label>
   </div>
 </div>
 <hr>
+    <div class="container">
+      <div class="row">
+      <div class="column1">
+          <label>Estimated value of Goods:</label>
+      </div>
+      <div class="column1">
+        <input type="text" readonly=true style="height: 70%; border-radius: 10%;">  
+    </div>
+    </div>
+    
+    <div class="row">
+      <div class="column1">
+          <label>Rate of goods per kg:</label>   
+      </div>
+      <div class="column1">
+      <input readonly=true style = "width: 50% ;height: 70%;border-radius: 5px;border-width: 1px;" value={{rate}}>
+      </div>
+          <div class="column1">
+           <label>Vehicle No:</label>   
+       </div>
+       <div class="column1">
+        <input readonly=true type="text" style="height: 70%; border-radius: 10%;" value={{vehicleNumber}}>
+       </div>
+          </div>
+
+      <div class="row">
+        <div class="column1">
+          <label>Additional Goods Value:</label>   
+        </div>
+        <div class="column1">
+          <input readonly=true style = "width: 50% ;height: 70%;border-radius: 5px;border-width: 1px;" value={{additionalRate}}>
+        </div>
+          </div>
+          <div class="row">
+            <div class="column1">
+              <label>Comment:</label>   
+          </div>
+          </div>
+          <div class="row" style="padding-left:10px; padding-right: 10px;">
+          <input readonly=true type="text" style="height:100%;width: 100%; border-radius: 10px;border-width: 1px; border-color: grey;">
+        </div>
+        </div>
+
+    <div class="card">
+      <div class="card-body">
+      <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+      <label ngbButtonLabel class="btn btn-success btn-sm">
+          <input ngbButton type="radio" (click)="modal.dismiss('Cross click');"> Save & Print
+          </label>
+          </div>
+          &nbsp;
+          <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+            <label ngbButtonLabel class="btn btn-primary btn-sm">
+              <input ngbButton type="radio" (click)="modal.dismiss('Cross click')"> Edit
+            </label>
+        </div>
+        </div>
+      </div>
+</ng-template>
+
+<ng-template #itemContent let-modal>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="container">
+  <div class="row">
+    <div class="column1">
+      <label>Lot Number:</label>
+      &nbsp;
+      <input type="text" readonly=true style="width: 50% ;height: 70%; border-radius: 5px;border-width: 1px;" value={{selectedLot}}>  
+    </div>
+    <div class="column1">
+    <label>
+      Item:
+    </label>
+    &nbsp;
+      <input type="text" readonly=true style="width: 70% ;height: 70%; border-radius: 5px;border-width: 1px;" value={{selectedItem}}>  
+  </div>
+    </div>
+  </div>
+<div class="card" *ngIf="dataList?.length">
+  <div class="card-body">
+    <div id="table" class="table-editable">
+      <label>Colour: {{selectedColour}}</label>
+      <br>
+      <label>Lot Number: {{selectedLot}}</label>
+      <table class="table table-bordered table-responsive-md table-striped text-center">
+        <tr>
+          <th class="text-center">Dia</th>
+          <th class="text-center">Roll</th>
+          <th class="text-center">Weight(KG)</th>
+          <th class="text-center">Comment</th>
+          <th class="text-center">Delete</th>
+        </tr>
+        <tr *ngFor="let data of dataList; let id = index">
+          <td>
+            <span (keyup)="changeValue(id, 'dia', $event)" (blur)="updateList(id, 'dia', $event)" contenteditable="true">{{data.dia}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'roll', $event)" (blur)="updateList(id, 'roll', $event)">{{data.roll}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'weight', $event)" (blur)="updateList(id, 'weight', $event)">{{data.weight}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'comment', $event)" (blur)="updateList(id, 'comment', $event)">{{data.comment}}</span>
+          </td>
+          <td>
+            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+              <label ngbButtonLabel class="btn btn-danger btn-sm">
+                <input ngbButton type="radio" (click)="remove(id)"> Delete
+              </label>
+          </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
 <div class="card">
   <div class="card-body">
+    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+      <label ngbButtonLabel class="btn btn-danger btn-sm">
+        <input ngbButton type="radio" (click)="modal.dismiss('Cross click')"> Cancel
+      </label>
+  </div>
+  <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+  <label ngbButtonLabel class="btn btn-success btn-sm">
+      <input ngbButton type="radio" [(ngModel)]="is_done" (click)="setTable($event);modal.dismiss('Cross click');"> Done
+      </label>
+      </div>
     </div>
-    <div>
-      <label style="padding:10px">Add Item:</label>
-      <hr style="width: 70%; margin-left: auto;
-      margin-right: auto;">
+
+    <div class="container">
+    <div class="card" style="border-radius: 10px; border-width: 4px;border-color:grey;padding-left: 1px;padding-right: 1px;margin-bottom: 50px;">
+      <div class="card-body" style="padding-left: 1.5px;padding-right: 1.5px;">
+        <strong> Add Item:</strong>
+        <hr style="border-width: 2px; color:grey;background-color:grey">
+        <div class="row">
+          <div class="column1">
+            <label>Part:</label>
+          </div>
+          <div class="column1">
+            <input type="text" style="width: 70% ;height: 70%; border-radius: 5px;border-width: 1px;">  
+          </div>
+          <div class="column1">
+            <label for="typeahead-basic">Colour:</label>
+          </div>
+            <div class="column1">
+        <input style = "width:70%; height: 70%; border-radius: 5px;border-width: 1px;" id="typeahead-basic" type="text" class="form-control" [(ngModel)]="selectedColour" value={{selectedColour}} [ngbTypeahead]="search_colour"/>
+            </div>
+          </div>
+        <hr style="height:0.5px;border-width:0;color:grey;background-color:grey">
+        <table class="table table-bordered table-responsive-md table-striped">
+          <tr >
+            <td *ngFor="let data of size_range; let id = index">
+              <div *ngIf="selected_type == 'piece'">
+                <label>{{data.id}}
+                    <br>Pieces</label>
+            </div>
+            <div *ngIf="selected_type == 'packed'">
+                <label>{{data.id}}
+                    <br>Box</label>
+            </div>
+            <input (keyup.enter)="add()" [(ngModel)]="selectedPiece" style="width:100%" autocomplete="off" required type="number" min="0">
+            <div *ngIf="selected_type == 'piece'">
+                <label>
+                    <small>WEIGHT</small>
+                </label>
+                <input (keyup.enter)="add()" [(ngModel)]="selectedWeight" style="width:100%"autocomplete="off" required type="number" min="0.000" step="0.001">
+            </div>
+            </td>
+          </tr>
+        </table>
+        <hr style="height:0.5px;border-width:0;color:gray;background-color:grey">
+    <div class="row container">
+      <div class="col-md-8">
+          <label>Item Comment</label>
+          <input autocomplete="on" type="text" maxlength="120" placeholder="Enter Item Comment (optional)" class="form-control input-sm">
+      </div>
+      <div class="col-md-2">
+              <label *ngIf="selected_type == 'piece'">Total Pieces</label>
+              <label *ngIf="selected_type == 'packed'">Total Box</label>
+          <br>
+      </div>
+      <div class="col-md-2" ng-if="selected_type == 'piece'">
+          <label>Total Weight</label>
+          <br>
+      </div>
+  </div>
+      </div>
+    </div>
     </div>
     </div>
 </ng-template>
+
+
+<ng-template #accContent let-modal>
+  <div class="modal-header" *ngIf="selected_type == 'accessories'">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="container">
+  <div class="row">
+    <div class="column1">
+      <label>Lot Number:</label>
+      &nbsp;
+      <input type="text" readonly=true style="width: 50% ;height: 70%; border-radius: 5px;border-width: 1px;" value={{selectedLot}}>  
+    </div>
+    </div>
+  </div>
+<div class="card" *ngIf="dataList?.length">
+  <div class="card-body">
+    <div id="table" class="table-editable">
+      <label>Colour: {{selectedColour}}</label>
+      <br>
+      <label>Lot Number: {{selectedLot}}</label>
+      <table class="table table-bordered table-responsive-md table-striped text-center">
+        <tr>
+          <th class="text-center">Dia</th>
+          <th class="text-center">Roll</th>
+          <th class="text-center">Weight(KG)</th>
+          <th class="text-center">Comment</th>
+          <th class="text-center">Delete</th>
+        </tr>
+        <tr *ngFor="let data of dataList; let id = index">
+          <td>
+            <span (keyup)="changeValue(id, 'dia', $event)" (blur)="updateList(id, 'dia', $event)" contenteditable="true">{{data.dia}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'roll', $event)" (blur)="updateList(id, 'roll', $event)">{{data.roll}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'weight', $event)" (blur)="updateList(id, 'weight', $event)">{{data.weight}}</span>
+          </td>
+          <td>
+            <span contenteditable="true" (keyup)="changeValue(id, 'comment', $event)" (blur)="updateList(id, 'comment', $event)">{{data.comment}}</span>
+          </td>
+          <td>
+            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+              <label ngbButtonLabel class="btn btn-danger btn-sm">
+                <input ngbButton type="radio" (click)="remove(id)"> Delete
+              </label>
+          </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-body">
+    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+      <label ngbButtonLabel class="btn btn-danger btn-sm">
+        <input ngbButton type="radio" (click)="modal.dismiss('Cross click')"> Cancel
+      </label>
+  </div>
+  <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
+  <label ngbButtonLabel class="btn btn-success btn-sm">
+      <input ngbButton type="radio" [(ngModel)]="is_done" (click)="setTable($event);modal.dismiss('Cross click');"> Done
+      </label>
+      </div>
+    </div>
+
+    <div class="container">
+    <div class="card" style="border-radius: 10px; border-width: 4px;border-color:grey;padding-left: 1px;padding-right: 1px;margin-bottom: 50px;">
+      <div class="card-body" style="padding-left: 1.5px;padding-right: 1.5px;">
+        <strong> Add Item:</strong>
+        <hr style="border-width: 2px; color:grey;background-color:grey">
+        <div class="row">
+          <div class="column1">
+            <label for="typeahead-basic">Item:</label>
+          </div>
+            <div class="column1">
+        <input style = "width:70%; height: 70%; border-radius: 5px;border-width: 1px;" id="typeahead-basic" type="text" class="form-control" [(ngModel)]="selectedItem" value={{selectedItem}} [ngbTypeahead]="search_item"/>
+            </div>
+          </div>
+        <hr style="height:0.5px;border-width:0;color:grey;background-color:grey">
+        <table class="table table-bordered table-responsive-md table-striped">
+          <tr >
+            <td *ngFor="let data of size_range; let id = index" >
+              <div>
+                <label>{{data.id}}
+                    <br>Nos</label>
+            </div>
+            <input style="width:100%" autocomplete="off" required type="number" min="0">
+            <div>
+                <label>
+                    <small>WEIGHT</small>
+                </label>
+                <input style="width:100%"autocomplete="off" required type="number" min="0.000" step="0.001">
+            </div>
+            </td>
+          </tr>
+        </table>
+        <hr style="height:0.5px;border-width:0;color:gray;background-color:grey">
+    <div class="row container">
+      <div class="col-md-8">
+          <label>Item Comment</label>
+          <input autocomplete="on" type="text" maxlength="120" placeholder="Enter Item Comment (optional)" class="form-control input-sm">
+      </div>
+      <div class="col-md-2">
+              <label >Total Nos</label>
+          <br>
+      </div>
+      <div class="col-md-2">
+          <label>Total Weight</label>
+          <br>
+      </div>
+  </div>
+      </div>
+    </div>
+    </div>
+    </div>
+</ng-template>
+
 <ul ngbNav #nav="ngbNav" class="nav-tabs">
     <li [ngbNavItem]="1">
       <a ngbNavLink>New DC</a>
       <ng-template ngbNavContent>
         <legend>Delivery Challan</legend>
         <hr>
+        <!-- <ng-editable-table [table-headers]="tableHeaders" [table-rows]="tableRows" ></ng-editable-table> -->
                <div class="container">
                    <div class="row">
                    <div class="column">
@@ -81,11 +552,98 @@
                         <label>Supplier Address:</label>   
                     </div>
                     <div class="column">
-                    <textarea rows="2" cols="50" readonly=true  value ={{address}} >
+                    <textarea rows="2" cols="55" readonly=true  value ={{address}} >
                     </textarea>
                     </div>
                        </div>
                    </div>
+                   <div class="card" *ngIf="enable_table ==1">
+                    <div class="card-body">
+                      <div id="table" class="table-editable">
+                        <div class="row">
+                        <label>Colour:</label>
+                        &nbsp;
+                        <strong>{{selectedColour}}</strong>
+                        &nbsp;
+                        <label>Lot Number:</label>
+                        &nbsp;
+                        <strong>{{selectedLot}}</strong>
+                      </div>
+                        <table class="table table-bordered table-responsive-md table-striped text-center">
+                          <tr>
+                            <th class="text-center">Dia</th>
+                            <th class="text-center">Roll</th>
+                            <th class="text-center">Weight(KG)</th>
+                            <th class="text-center">Comment</th>
+                            <th class="text-center">Delete</th>
+                          </tr>
+                          <tr *ngFor="let data of dataList; let id = index">
+                            <td>
+                              <span (keyup)="changeValue(id, 'dia', $event)" (blur)="updateList(id, 'dia', $event)" contenteditable="true">{{data.dia}}</span>
+                            </td>
+                            <td>
+                              <span contenteditable="true" (keyup)="changeValue(id, 'roll', $event)" (blur)="updateList(id, 'roll', $event)">{{data.roll}}</span>
+                            </td>
+                            <td>
+                              <span contenteditable="true" (keyup)="changeValue(id, 'weight', $event)" (blur)="updateList(id, 'weight', $event)">{{data.weight}}</span>
+                            </td>
+                            <td>
+                              <span contenteditable="true" (keyup)="changeValue(id, 'comment', $event)" (blur)="updateList(id, 'comment', $event)">{{data.comment}}</span>
+                            </td>
+                            <td>
+                              <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+                                <label ngbButtonLabel class="btn btn-danger btn-sm">
+                                  <input ngbButton type="radio" (click)="remove(id)"> Delete
+                                </label>
+                            </div>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                      <div class="container">
+                        <div class="row">
+                        <div class="column1">
+                            <label>Estimated value of Goods:</label>
+                        </div>
+                        <div class="column1">
+                          <input type="text" readonly=true style="height: 70%; border-radius: 10%;">  
+                      </div>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="column1">
+                            <label>Rate of goods per kg:</label>   
+                        </div>
+                        <div class="column1">
+                        <input style = "width: 50% ;height: 70%;border-radius: 5px;border-width: 1px;" id="diabox" type="number" min="0" step="0.05" [(ngModel)]="rate">
+                        </div>
+                            <div class="column1">
+                             <label>Vehicle No:</label>   
+                         </div>
+                         <div class="column1">
+                          <input type="text" style="height: 70%; border-radius: 10%;" [(ngModel)]="vehicleNumber">
+                         </div>
+                            </div>
+                  
+                        <div class="row">
+                          <div class="column1">
+                            <label>Additional Goods Value:</label>   
+                          </div>
+                          <div class="column1">
+                            <input style = "width: 50% ;height: 70%;border-radius: 5px;border-width: 1px;" id="diabox" type="number" min="0" step="0.05" [(ngModel)]="additionalRate">
+                          </div>
+                            </div>
+                            <div class="row">
+                              <div class="column1">
+                                <label>Comment:</label>   
+                            </div>
+                            </div>
+                            <div class="row" style="padding-left:10px; padding-right: 10px;">
+                            <input type="text" style="height:100%;width: 100%; border-radius: 10px;border-width: 1px; border-color: grey;">
+                          </div>
+                          </div>
+                    </div>
+                  </div>
                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
                        <label ngbButtonLabel class="btn btn-danger">
                          <input ngbButton type="radio" ngModel (ngModelChange)="ClearFields();"> Clear DC
@@ -94,7 +652,7 @@
                    <div class="btn-group btn-group-toggle float-right" ngbRadioGroup name="radioBasic">
                    <label ngbButtonLabel class="btn btn-success">
                        <!-- <input ngbButton type="radio" (click)="showSuccess()"> Save DC -->
-                       <input ngbButton type="radio" (click)="openLg(content)"> Save DC
+                       <input ngbButton type="radio" (click)="openXl(printContent)"> Save DC
                        </label>
                    </div>
        <hr>
@@ -129,19 +687,19 @@
                         <label for="typeahead-basic">Lot Number:</label>
                     </div>
                     <div class="column">
-                    <input id="typeahead-basic1" type="text" class="form-control" [ngbTypeahead]="search_lot"/>
+                    <input id="typeahead-basic1" type="text" [(ngModel)]="selectedLot" class="form-control" [ngbTypeahead]="search_lot" (keyup.enter)="openLg(accContent)"/>
                   </div>
                     <div class="column" *ngIf="selected_type == 'piece'|| selected_type =='packed'">
                         <label for="typeahead-basic">Item:</label>
                     </div>
                     <div class="column" *ngIf="selected_type == 'piece'|| selected_type =='packed'">
-                    <input id="typeahead-basic2" type="text" class="form-control" [ngbTypeahead]="search_item"/>
+                    <input id="typeahead-basic2" type="text" class="form-control" [ngbTypeahead]="search_item" [(ngModel)]="selectedItem" (keyup.enter)="openLg(itemContent)"/>
                         </div>
                         <div class="column" *ngIf="selected_type =='cloth' || selected_type == ''">
                           <label for="typeahead-basic">New Colour:</label>
                       </div>
                       <div class="column" *ngIf="selected_type =='cloth' || selected_type =='' ">
-                      <input id="typeahead-basic" type="text" class="form-control" [ngbTypeahead]="search_colour"/>
+                      <input id="typeahead-basic" type="text" (keyup.enter)="openLg(content)" class="form-control" [(ngModel)]="selectedColour" [ngbTypeahead]="search_colour"/>
                           </div>
                       </div>
                     </div>
@@ -158,3 +716,13 @@
   </ul>
   
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+
+
+  <!-- <ul ngbNav [activeId]="route.fragment | async" class="nav-tabs">
+    <li [ngbNavItem]="link.fragment" *ngFor="let link of links">
+      <a ngbNavLink routerLink="." [fragment]="link.fragment">{{ link.title }}</a>
+    </li>
+  </ul>
+  
+  <router-outlet></router-outlet> -->
